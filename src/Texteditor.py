@@ -1,4 +1,19 @@
 from tkinter import *
+from tkinter import messagebox
+from tkinter import filedialog
+
+name = "Новый документ"
+
+
+def file_name(Name):
+    global name  # Объявление переменной name как глобальной
+    name = Name
+    update_file_menu()  # Обновляем отображение имени файла в меню
+
+
+def update_file_menu():
+    # Обновляем текст в пункте меню "Новый документ"
+    main_menu.entryconfig("Новый документ", label=name)
 
 
 def change_theme(theme):
@@ -12,13 +27,70 @@ def change_fonts(ch_font):
     text_fild["font"] = font_list[ch_font]["font"]
 
 
+def open_file():
+    global file_path
+    file_path = filedialog.askopenfilename(
+        title="Выбор файла",
+        filetypes=(("Текстовые документы (*.txt)", "*.txt"), ("Все файлы", "*.*")),
+    )
+    # открываем окно, с выбором файла с компьютера, askopenfilename(...) возвращает путь файла
+    if file_path:
+        text_fild.delete("1.0", END)
+        # очищаем поле с первого символа
+
+        text_fild.insert("1.0", open(file_path, encoding="utf-8").read())
+        file_name(file_path[file_path.rindex("/") + 1 :])
+        # считываем и записываем данный с файла
+
+
+def save_file():
+    file_path = filedialog.asksaveasfilename(
+        filetypes=(("Текстовые документы (*.txt)", "*.txt"), ("Все файлы", "*.*"))
+    )
+    global f
+    f = open(file_path, "w", encoding="utf-8")
+    text = text_fild.get("1.0", END)
+    file_name(file_path[file_path.rindex("/") + 1 :])
+    f.write(text)
+    f.close()
+
+
+def close_file():
+    # Определяем, есть ли что-то в текстовом поле
+    current_text = text_fild.get("1.0", END).strip()
+    
+    # Проверяем, если текущий текст пуст и имя документа "Новый документ", ничего не сохраняем
+    if current_text == "" and name == "Новый документ":
+        root.destroy()  # Просто закрываем приложение
+
+    # Проверяем, есть ли несохраненные изменения в тексте
+    elif current_text != "" and name == "Новый документ":
+        answer = messagebox.askokcancel("Выход", "У вас есть несохраненные изменения. Вы точно хотите выйти?")
+        if answer:
+            root.destroy()
+    
+    # Если документ был открыт и изменен
+    elif name != "Новый документ":
+        # Сравниваем текущее содержимое с тем, что было сохранено
+        with open(file_path, "r", encoding="utf-8") as file:
+            saved_text = file.read().strip()
+        
+        if current_text != saved_text:
+            answer = messagebox.askokcancel("Выход", "У вас есть несохраненные изменения. Вы точно хотите выйти?")
+            if answer:
+                root.destroy()
+        else:
+            root.destroy()  # Закрываем приложение, если ничего не изменилось
+
 root = Tk()
 # создаем объект на основе класса Tk
 main_menu = Menu(root)
 
 file_menu = Menu(main_menu, tearoff=0)
-file_menu.add_command(label="Открыть")
-file_menu.add_command(label="Сохранить")
+file_menu.add_command(label="Открыть", command=open_file)
+file_menu.add_command(label="Сохранить", command=save_file)
+file_menu.add_separator()
+file_menu.add_command(label="Закрыть", command=close_file)
 root.config(menu=file_menu)
 # Создаем выпадающий список "Файл", в котором будут находиться команды Открыть и Сохранить
 
@@ -39,6 +111,7 @@ root.config(menu=view_menu)
 # Добавляем выпадающий список в меню
 main_menu.add_cascade(label="Файл", menu=file_menu)
 main_menu.add_cascade(label="Вид", menu=view_menu)
+main_menu.add_command(label=name, command=lambda: file_name("Новый документ"))
 
 
 """"----------------------------------------------------------------------"""
