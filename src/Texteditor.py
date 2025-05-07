@@ -15,9 +15,12 @@ def update_file_menu():
     # Обновляем текст в пункте меню "Новый документ"
     main_menu.entryconfig(3, label=name)
 
+
 def new_file():
     text_fild.delete("1.0", END)
     file_name("Новый документ")
+
+
 def change_theme(theme):
     text_fild["bg"] = theme_colors[theme]["text_bg"]
     text_fild["fg"] = theme_colors[theme]["text_fg"]
@@ -52,8 +55,7 @@ def save_file():
             defaultextension=".txt",
             filetypes=(("Текстовые документы (*.txt)", "*.txt"), ("Все файлы", "*.*")),
         )
-       
-    
+
     # Сохраняем файл
     with open(file_path, "w", encoding="utf-8") as f:
         text = text_fild.get("1.0", END)
@@ -63,29 +65,34 @@ def save_file():
 def close_file():
     # Определяем, есть ли что-то в текстовом поле
     current_text = text_fild.get("1.0", END).strip()
-    
+
     # Проверяем, если текущий текст пуст и имя документа "Новый документ", ничего не сохраняем
     if current_text == "" and name == "Новый документ":
         root.destroy()  # Просто закрываем приложение
 
     # Проверяем, есть ли несохраненные изменения в тексте
     elif current_text != "" and name == "Новый документ":
-        answer = messagebox.askokcancel("Выход", "У вас есть несохраненные изменения. Вы точно хотите выйти?")
+        answer = messagebox.askokcancel(
+            "Выход", "У вас есть несохраненные изменения. Вы точно хотите выйти?"
+        )
         if answer:
             root.destroy()
-    
+
     # Если документ был открыт и изменен
     elif name != "Новый документ":
         # Сравниваем текущее содержимое с тем, что было сохранено
         with open(file_path, "r", encoding="utf-8") as file:
             saved_text = file.read().strip()
-        
+
         if current_text != saved_text:
-            answer = messagebox.askokcancel("Выход", "У вас есть несохраненные изменения. Вы точно хотите выйти?")
+            answer = messagebox.askokcancel(
+                "Выход", "У вас есть несохраненные изменения. Вы точно хотите выйти?"
+            )
             if answer:
                 root.destroy()
         else:
             root.destroy()  # Закрываем приложение, если ничего не изменилось
+
 
 root = Tk()
 # создаем объект на основе класса Tk
@@ -123,9 +130,12 @@ main_menu.add_command(label=name, command=lambda: file_name("Новый доку
 """"----------------------------------------------------------------------"""
 root.config(menu=main_menu)
 # к опции menu  присваиваем экземпляр Menu через переменную
-root.title("Текстовый редактор")
+root.title("Textopia")
 root.geometry("900x600")
-root.iconbitmap()
+icon = PhotoImage(file="C:\\Users\\Honor\\Desktop\\иконка textopia.png")
+root.iconphoto(False, icon)
+
+
 # создаем окно и настраиваем его параметры: имя, размер, иконку (по умолчанию)
 f_text = Frame(root, bg="#2d2d2d")
 f_text.pack(fill=BOTH, expand=1)
