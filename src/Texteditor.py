@@ -12,7 +12,7 @@ def file_name(Name):
 
 
 def update_file_menu():
-    # Обновляем текст в пункте меню "Новый документ"
+    # Обновляем текст в меню 
     main_menu.entryconfig(3, label=name)
 
 
@@ -45,11 +45,11 @@ def open_file():
 
         text_fild.insert("1.0", open(file_path, encoding="utf-8").read())
         file_name(file_path[file_path.rindex("/") + 1 :])
-        # считываем и записываем данный с файла
+        # считываем и записываем данные с файла
 
 
 def save_file():
-    global file_path  # Объявляем переменную file_path глобальной для использования
+    global file_path 
     if name == "Новый документ":  # Если файл еще не сохранен
         file_path = filedialog.asksaveasfilename(
             defaultextension=".txt",
@@ -72,7 +72,7 @@ def close_file():
 
     # Проверяем, есть ли несохраненные изменения в тексте
     elif current_text != "" and name == "Новый документ":
-        answer = messagebox.askokcancel(
+        answer = messagebox.askyesno(
             "Выход", "У вас есть несохраненные изменения. Вы точно хотите выйти?"
         )
         if answer:
@@ -85,7 +85,7 @@ def close_file():
             saved_text = file.read().strip()
 
         if current_text != saved_text:
-            answer = messagebox.askokcancel(
+            answer = messagebox.askyesno(
                 "Выход", "У вас есть несохраненные изменения. Вы точно хотите выйти?"
             )
             if answer:
@@ -111,13 +111,15 @@ root.config(menu=file_menu)
 view_menu = Menu(main_menu, tearoff=0)
 view_menu_sub = Menu(view_menu, tearoff=0)
 font_menu_sub = Menu(view_menu, tearoff=0)
-view_menu_sub.add_command(label="Тёмная", command=lambda: change_theme("dark"))
-view_menu_sub.add_command(label="Светлая", command=lambda: change_theme("light"))
-view_menu.add_cascade(label="Тема", menu=view_menu_sub)
+
 font_menu_sub.add_command(label="Arial", command=lambda: change_fonts("Arial"))
 font_menu_sub.add_command(label="Comic Sans MS", command=lambda: change_fonts("CSMS"))
 font_menu_sub.add_command(label="Times New Roman", command=lambda: change_fonts("TNR"))
 view_menu.add_cascade(label="Шрифт...", menu=font_menu_sub)
+
+view_menu_sub.add_command(label="Тёмная", command=lambda: change_theme("dark"))
+view_menu_sub.add_command(label="Светлая", command=lambda: change_theme("light"))
+view_menu.add_cascade(label="Тема", menu=view_menu_sub)
 root.config(menu=view_menu)
 
 
@@ -157,13 +159,13 @@ theme_colors = {
         "text_fg": "black",
         "cursor": "#7b1fa2",
         "select_bg": "#9c27b0",
-    },
+    }
 }
 
 font_list = {
     "Arial": {"font": "Arial 14"},
     "CSMS": {"font": ("Comic Sans MS", 14)},
-    "TNR": {"font": ("Times New Roman", 14)},
+    "TNR": {"font": ("Times New Roman", 14)}
 }
 
 text_fild = Text(
